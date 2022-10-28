@@ -18,6 +18,7 @@ public class ChangeDataUser {
         userClient = new UserClient();
         userClient.create(user);
     }
+
     @After
     public void delete() {
         userClient.delete(user);

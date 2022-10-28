@@ -5,6 +5,7 @@ import org.junit.Test;
 import user.User;
 import user.UserClient;
 import user.UserCredentials;
+
 import static org.junit.Assert.assertEquals;
 
 public class GetOrdersTest {
@@ -27,15 +28,12 @@ public class GetOrdersTest {
     @DisplayName("Проверить что авторизованный пользователь получает заказ")
     public void getOrdersWithAuth() {
         UserCredentials creds = UserCredentials.from(user);
-        String token = userClient.login(creds)
-                .extract().path("accessToken");
+        String token = userClient.login(creds).extract().path("accessToken");
         String json = "{\"ingredients\": [\"61c0c5a71d1f82001bdaaa6d\",\"61c0c5a71d1f82001bdaaa6f\"]}";
-        int total = userClient.getOrders(token)
-                .extract().path("total");
+        int total = userClient.getOrders(token).extract().path("total");
         userClient.createOrder(token, json);
         userClient.getOrders(token);
-        int newTotal = userClient.getOrders(token)
-                .extract().path("total");
+        int newTotal = userClient.getOrders(token).extract().path("total");
         System.out.println(total);
         assertEquals(total + 1, newTotal);
     }
@@ -43,8 +41,7 @@ public class GetOrdersTest {
     @Test
     @DisplayName("Проверить при попытке получить заказ неавторизованным пользователем вернется ошибка")
     public void getOrdersWithoutAuth() {
-        String message = userClient.getOrdersWithoutAuth()
-                .extract().path("message");
+        String message = userClient.getOrdersWithoutAuth().extract().path("message");
         assertEquals("You should be authorised", message);
     }
 }

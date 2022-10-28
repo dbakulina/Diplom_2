@@ -5,6 +5,7 @@ import org.junit.Test;
 import user.User;
 import user.UserClient;
 import user.UserCredentials;
+
 import static org.junit.Assert.*;
 
 public class LoginTest {
@@ -27,8 +28,7 @@ public class LoginTest {
     @DisplayName("Проверить что можно залогиниться под существующим пользователем")
     public void userloginTest() {
         UserCredentials creds = UserCredentials.from(user);
-        Boolean isOk = userClient.login(creds)
-                .extract().path("success");
+        Boolean isOk = userClient.login(creds).extract().path("success");
         assertTrue(isOk);
     }
 
@@ -36,8 +36,7 @@ public class LoginTest {
     @DisplayName("Проверить что нельзя залогиниться с неверным логином и паролем")
     public void userloginTestWrongLoginPassword() {
         UserCredentials creds = UserCredentials.getWrongLoginPassword(user);
-        String massage = userClient.login(creds)
-                .extract().path("message");
+        String massage = userClient.login(creds).extract().path("message");
         assertEquals("email or password are incorrect", massage);
     }
 }
