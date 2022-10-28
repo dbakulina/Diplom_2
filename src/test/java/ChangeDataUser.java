@@ -1,5 +1,6 @@
 import io.qameta.allure.junit4.DisplayName;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +18,10 @@ public class ChangeDataUser {
         userClient = new UserClient();
         userClient.create(user);
     }
+    @After
+    public void delete() {
+        userClient.delete(user);
+    }
 
     @Test
     @DisplayName("Проверить что авторизованный пользователь может изменить любое поле данных")
@@ -28,9 +33,6 @@ public class ChangeDataUser {
                 .extract().path("user.email");
         String name = userClient.login(creds)
                 .extract().path("user.name");
-        String password = userClient.login(creds)
-                .extract().path("user.password");
-        System.out.println(token);
         userClient.getDataUser(token);
         String json = "{\"email\": \"" + RandomStringUtils.randomAlphabetic(6) + "@ru.ru\", \"name\": \"" + RandomStringUtils.randomAlphabetic(6) + "\"}";
         String newName = userClient.changeDataUser(token, json)
@@ -39,7 +41,8 @@ public class ChangeDataUser {
                 .extract().body().path("user.email");
         Assert.assertNotEquals(name, newName);
         Assert.assertNotEquals(email, newEmail);
-        userClient.deleteChange(token);
+        String jsonNew = "{\"email\": \"" + email + "\", \"name\": \"" + name + "\"}";
+        userClient.changeDataUser(token, jsonNew);
     }
 
     @Test
@@ -53,6 +56,5 @@ public class ChangeDataUser {
         String message = userClient.changeDataUserWithoutAutorization(json)
                 .extract().body().path("message");
         Assert.assertEquals("You should be authorised", message);
-        userClient.delete(user);
     }
 }

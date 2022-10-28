@@ -15,6 +15,10 @@ public class UserTest {
         user = User.getRandomUser();
         userClient = new UserClient();
     }
+    @After
+    public void delete() {
+        userClient.delete(user);
+    }
 
     @Test
     @DisplayName("Проверить что можно создать уникального пользователя")
@@ -22,7 +26,6 @@ public class UserTest {
         userClient.create(user)
                 .assertThat()
                 .statusCode(200);
-        userClient.delete(user);
     }
 
     @Test
@@ -34,12 +37,12 @@ public class UserTest {
                 .statusCode(403)
                 .extract().path("message");
         assertEquals("User already exists", userAlreadyExists);
-        userClient.delete(user);
     }
 
     @Test
     @DisplayName("Проверить что нельзя создать пользователя и не заполнить одно из обязательных полей")
     public void userCreateWithoutPasswordTest() {
+        userClient.create(user);
         User userWithoutPassword = User.getWithoutPassword();
         String expected = userClient.create(userWithoutPassword)
                 .assertThat()
